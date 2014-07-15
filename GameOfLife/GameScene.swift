@@ -22,6 +22,9 @@ class GameScene: SKScene {
     var _generationValueLabel = SKLabelNode(text: "0")
     var _playButton = SKSpriteNode(imageNamed: "play.png")
     var _pauseButton = SKSpriteNode(imageNamed: "pause.png")
+    
+    var _tiles:[[SKSpriteNode]] = []
+    var _margin = 4
    
     override func didMoveToView(view: SKView!) {
         let background = SKSpriteNode(imageNamed: "background.png")
@@ -72,9 +75,35 @@ class GameScene: SKScene {
         _generationValueLabel.fontColor = UIColor(red: 0, green: 0.2, blue: 0, alpha: 1)
         self.addChild(_generationValueLabel)
         
+        let tileSize = calculateTileSize()
+        for r in 0 ..< _numRows {
+            var tileRow:[SKSpriteNode] = []
+            for c in 0 ..< _numCols {
+                let tile = SKSpriteNode(imageNamed: "bubble.png")
+                tile.size = CGSize(width: tileSize.width, height: tileSize.height)
+                tile.anchorPoint = CGPoint(x: 0, y: 0)
+                tile.position = getTilePosition(row: r, column: c)
+                self.addChild(tile)
+                tileRow.append(tile)
+            }
+            _tiles.append(tileRow)
+        }
     }
     
     override func update(currentTime: CFTimeInterval) {
         /* Called before each frame is rendered */
+    }
+    
+    func calculateTileSize() -> CGSize {
+        let tileWidth = _gridWidth / _numCols - _margin
+        let tileHeight = _gridHeight / _numCols - _margin
+        return CGSize(width: tileWidth, height: tileHeight)
+    }
+    
+    func getTilePosition(row r:Int, column c:Int) -> CGPoint {
+        let tileSize = calculateTileSize()
+        let x = Int(_gridLowerLeftCorner.x) + _margin + (c * (Int(tileSize.width) + _margin))
+        let y = Int(_gridLowerLeftCorner.y) + _margin + (r * (Int(tileSize.height) + _margin))
+        return CGPoint(x: x, y: y)
     }
 }
